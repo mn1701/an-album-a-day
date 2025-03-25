@@ -1,4 +1,4 @@
-"use client"; // Add this line at the top
+"use client";
 
 export default function Home() {
   const handleClick = (option: string) => {

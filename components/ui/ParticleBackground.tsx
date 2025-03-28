@@ -1,9 +1,10 @@
-"use client"
+"use client";
 
 import { useEffect, useRef } from "react";
 
 export default function ParticleBackground() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const animationFrameId = useRef<number | null>(null); // Track the animation frame ID
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -57,6 +58,7 @@ export default function ParticleBackground() {
         particle.x += particle.speedX;
         particle.y += particle.speedY;
 
+        // Wrap particles around the edges
         if (particle.x < 0) particle.x = canvas.width;
         if (particle.x > canvas.width) particle.x = 0;
         if (particle.y < 0) particle.y = canvas.height;
@@ -89,7 +91,7 @@ export default function ParticleBackground() {
     const animate = () => {
       updateParticles();
       drawParticles();
-      requestAnimationFrame(animate);
+      animationFrameId.current = requestAnimationFrame(animate);
     };
 
     const resizeCanvas = () => {
@@ -103,6 +105,10 @@ export default function ParticleBackground() {
     animate();
 
     return () => {
+      // Cleanup animation frame and event listener
+      if (animationFrameId.current) {
+        cancelAnimationFrame(animationFrameId.current);
+      }
       window.removeEventListener("resize", resizeCanvas);
     };
   }, []);
